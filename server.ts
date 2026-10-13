@@ -186,6 +186,14 @@ const BACKUP_MODELS = ['gemini-3.1-flash-lite', 'gemini-flash-latest', 'gemini-3
 app.post('/api/analyze', async (req: Request, res: Response) => {
   let modelAttempted = PRIMARY_MODEL;
   try {
+    if (!process.env.GEMINI_API_KEY) {
+      res.status(500).json({
+        error: 'Server configuration error: GEMINI_API_KEY environment variable is missing on the server.',
+        statusCode: 500,
+      });
+      return;
+    }
+
     const { text, jobPostingText } = req.body;
     if (!text || typeof text !== 'string' || text.trim().length === 0) {
       res.status(400).json({ error: 'Please provide recruiter text or job posting to analyze.', statusCode: 400, model: PRIMARY_MODEL });
@@ -277,7 +285,7 @@ Format every draft reply (standard, direct, casual) strictly like a real email:
     const parsedData = JSON.parse(responseText);
     res.json({ success: true, data: parsedData, model: modelAttempted });
   } catch (error: any) {
-    console.error('Error analyzing recruiter message with Gemini:', error);
+    console.error('Error analyzing recruiter message with Gemini:', error?.message || error);
 
     let statusCode = 500;
     let errorMessage = error?.message || 'Failed to analyze message. Please try again.';
@@ -295,6 +303,13 @@ Format every draft reply (standard, direct, casual) strictly like a real email:
 
     if (error?.status) statusCode = Number(error.status) || statusCode;
     if (error?.statusCode) statusCode = Number(error.statusCode) || statusCode;
+
+    // Sanitize any API keys or tokens in error message before sending to client
+    if (typeof errorMessage === 'string') {
+      errorMessage = errorMessage
+        .replace(/key=[a-zA-Z0-9_\-]+/gi, 'key=[REDACTED]')
+        .replace(/AIza[0-9A-Za-z-_]{35}/g, '[REDACTED_API_KEY]');
+    }
 
     const httpStatus = statusCode >= 400 && statusCode < 600 ? statusCode : 500;
 

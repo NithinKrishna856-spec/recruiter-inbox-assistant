@@ -1,0 +1,6 @@
+{
+  "name": "Recruiter Inbox Assistant",
+  "description": "Understand the real terms of recruiter offers before you reply. Extract key details, spot what's missing, and track your follow-ups.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

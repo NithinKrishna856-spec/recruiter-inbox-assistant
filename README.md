@@ -11,7 +11,7 @@
 
 ## Overview
 
-![Recruiter Inbox Assistant Screenshot](docs/screenshot.png)
+![Recruiter Inbox Assistant Screenshot](screenshot.png)
 
 **Live Application:** [https://recruiter-inbox-assistant.ai.studio](https://recruiter-inbox-assistant.ai.studio)
 
